@@ -270,7 +270,16 @@ x\left(t_{n}\right)=x\left(t_{0}\right)+\int_{t_{0}}^{t_{n}}\left(v\left(t_{0}\r
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-04-28 16:58:34 / 修改时间：18:27:17" itemprop="dateCreated datePublished" datetime="2022-04-28T16:58:34+08:00">2022-04-28</time>
+              <time title="创建时间：2022-04-28 16:58:34 / 修改时间：20:27:43" itemprop="dateCreated datePublished" datetime="2022-04-28T16:58:34+08:00">2022-04-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ros-navigation/" itemprop="url" rel="index"><span itemprop="name">ros navigation</span></a>
+                </span>
             </span>
 
           
@@ -302,8 +311,13 @@ box的代价值；(3)依次遍历所有层，下一层可以使用上一层对�
 (2)Costmap2D为2D代价地图类；
 (3)costmap_2d主要实现了静态地图层(StaticLayer)，该层输入为运行map_server获得的静态地图数据；障碍物层(ObstacleLayer),该层的输入为激光雷达扫描得到的环境数据；膨胀层(InflationLayer)，该层的作用是对代价地图进行膨胀；和体素层(VoxelLayer),该层的用于处理3D信息。
 (4)LayerdCostmap的数据包括代价地图和指向Layer的指针，对于每次代价地图更新，其伪代码如下所示：
-其伪代码如下所示： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for(auto layer = plugins.begin();layer!=plugins.end();++layer)&#123;</span><br><span class="line">    layer-&gt;updateBounds();  </span><br><span class="line">    layer-&gt;updateValues();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for(auto layer = plugins.begin();layer!=plugins.end();++layer)&#123;</span><br><span class="line">    layer-&gt;updateBounds();  </span><br><span class="line">    layer-&gt;updateValues();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="具体的updatebounds和updatevalues计算">具体的updateBounds()和updateValues()计算</h3>
+<p>对于updateValues()，有以下几种方式：
+(1)updateWithTrueOverwrite():在代价地图的某个区域修改代价地图的代价值，此方法用当前层的代价值替换代价地图对应的值；
+(2)updateWithOverwrite():在代价地图的某个区域修改代价地图的代价值，只有当当前层的代价值是有效值才用该值去替换代价地图的对应值；
+(3)updateWithMax():当修改代价地图某一区域格子的代价值时，取代价地图与当前层对应格子的最大者；
+(4)updateWithAddition():取代价地图与当前层对应格子的和作为代价地图对应格子的值。</p>
 <h3 id="一点思考">一点思考</h3>
 <p>由于未来可能会有不同的场景需要，层应该是易于扩展的，此时或可使用设计模式中的策略设计模式。</p>
 
@@ -609,7 +623,7 @@ you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hex
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span>
       </div>
   </nav>
