@@ -20,16 +20,18 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="CostMap_2d costmap_2d是ros功能包，它的主要功能是：（1）从环境中获取传感器数据，构建2D或3D占有栅格地图(occupancy grid)；（2）根据占有栅格地图及移动机器人的膨胀半径生成代价地图（costmap）。costmap_2d主要基于论文“Layered Costmaps for Context-Sensitive Navigation”，该论文的主要思想">
+  <meta name="description" content="costmap_2d costmap_2d是ros功能包，它的主要功能是：（1）从环境中获取传感器数据，构建2D或3D占有栅格地图(occupancy grid)；（2）根据占有栅格地图及移动机器人的膨胀半径生成代价地图（costmap）。costmap_2d主要基于论文“Layered Costmaps for Context-Sensitive Navigation”，该论文的主要思想">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ROS Navigation CostMap_2d">
+<meta property="og:title" content="ROS Navigation costmap_2d">
 <meta property="og:url" content="http://example.com/2022/04/28/costmap/index.html">
 <meta property="og:site_name" content="Hello Robotics!">
-<meta property="og:description" content="CostMap_2d costmap_2d是ros功能包，它的主要功能是：（1）从环境中获取传感器数据，构建2D或3D占有栅格地图(occupancy grid)；（2）根据占有栅格地图及移动机器人的膨胀半径生成代价地图（costmap）。costmap_2d主要基于论文“Layered Costmaps for Context-Sensitive Navigation”，该论文的主要思想">
+<meta property="og:description" content="costmap_2d costmap_2d是ros功能包，它的主要功能是：（1）从环境中获取传感器数据，构建2D或3D占有栅格地图(occupancy grid)；（2）根据占有栅格地图及移动机器人的膨胀半径生成代价地图（costmap）。costmap_2d主要基于论文“Layered Costmaps for Context-Sensitive Navigation”，该论文的主要思想">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/04/28/costmap/costmap.png">
+<meta property="og:image" content="http://example.com/2022/04/28/costmap/update.png">
+<meta property="og:image" content="http://example.com/2022/04/28/costmap/class.png">
 <meta property="article:published_time" content="2022-04-28T08:58:34.000Z">
-<meta property="article:modified_time" content="2022-04-28T09:17:55.230Z">
+<meta property="article:modified_time" content="2022-04-28T10:27:17.825Z">
 <meta property="article:author" content="徐行">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2022/04/28/costmap/costmap.png">
@@ -47,7 +49,7 @@
   };
 </script>
 
-  <title>ROS Navigation CostMap_2d | Hello Robotics!</title>
+  <title>ROS Navigation costmap_2d | Hello Robotics!</title>
   
 
 
@@ -189,7 +191,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ROS Navigation CostMap_2d
+          ROS Navigation costmap_2d
         </h1>
 
         <div class="post-meta">
@@ -200,7 +202,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-04-28 16:58:34 / 修改时间：17:17:55" itemprop="dateCreated datePublished" datetime="2022-04-28T16:58:34+08:00">2022-04-28</time>
+              <time title="创建时间：2022-04-28 16:58:34 / 修改时间：18:27:17" itemprop="dateCreated datePublished" datetime="2022-04-28T16:58:34+08:00">2022-04-28</time>
             </span>
 
           
@@ -214,17 +216,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="costmap_2d">CostMap_2d</h2>
+        <h3 id="costmap_2d">costmap_2d</h3>
 <p>costmap_2d是ros功能包，它的主要功能是：（1）从环境中获取传感器数据，构建2D或3D占有栅格地图(occupancy
 grid)；（2）根据占有栅格地图及移动机器人的膨胀半径生成代价地图（costmap）。costmap_2d主要基于论文“Layered
 Costmaps for Context-Sensitive
 Navigation”，该论文的主要思想是：将代价地图的数据处理分成语义分离的各个层，每个层处理一种障碍物类型或约束，每个层依次更新代价地图的值。相较于单层的代价地图，此方法能够处理不同场景下的约束，具有更好的扩展性。</p>
 <img src="/2022/04/28/costmap/costmap.png" class title="costmap">
-<p>costmap_2d更新代价地图
-代价地图的更新分为三个步骤：(1)在每一层，首先调用updateBounds()函数，该函数确定代价地图更新的范围，即一个bounding
+<h3 id="costmap_2d更新代价地图">costmap_2d更新代价地图</h3>
+<p>代价地图的更新分为三个步骤：(1)在每一层，首先调用updateBounds()函数，该函数确定代价地图更新的范围，即一个bounding
 box；(2)调用updateValues(),该函数将更新costmap位于bounding
-box的代价值；(3)依次遍历所有层，下一层可以使用上一层对于costmap修改的值。其伪代码如下所示：
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for(auto layer = plugins.begin();layer!=plugins.end();++layer)&#123;</span><br><span class="line">  layer-&gt;updateBounds();  </span><br><span class="line">  layer-&gt;updateValues();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+box的代价值；(3)依次遍历所有层，下一层可以使用上一层对于costmap修改的值，并修改costmap中的代价值。其过程如下图所示：</p>
+<img src="/2022/04/28/costmap/update.png" class title="update">
+<p>考虑如下所示的类图；</p>
+<img src="/2022/04/28/costmap/class.png" class title="classs">
+<p>其中各个类的作用如下：
+(1)Layer类为抽象基类，该类主要包括updateBounds()和updateValues()；
+(2)Costmap2D为2D代价地图类；
+(3)costmap_2d主要实现了静态地图层(StaticLayer)，该层输入为运行map_server获得的静态地图数据；障碍物层(ObstacleLayer),该层的输入为激光雷达扫描得到的环境数据；膨胀层(InflationLayer)，该层的作用是对代价地图进行膨胀；和体素层(VoxelLayer),该层的用于处理3D信息。
+(4)LayerdCostmap的数据包括代价地图和指向Layer的指针，对于每次代价地图更新，其伪代码如下所示：
+其伪代码如下所示： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for(auto layer = plugins.begin();layer!=plugins.end();++layer)&#123;</span><br><span class="line">    layer-&gt;updateBounds();  </span><br><span class="line">    layer-&gt;updateValues();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="具体的updatebounds和updatevalues计算">具体的updateBounds()和updateValues()计算</h3>
+<h3 id="一点思考">一点思考</h3>
+<p>由于未来可能会有不同的场景需要，层应该是易于扩展的，此时或可使用设计模式中的策略设计模式。</p>
 
     </div>
 
@@ -305,7 +318,7 @@ box的代价值；(3)依次遍历所有层，下一层可以使用上一层对�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#costmap_2d"><span class="nav-number">1.</span> <span class="nav-text">CostMap_2d</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#costmap_2d"><span class="nav-number">1.</span> <span class="nav-text">costmap_2d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#costmap_2d%E6%9B%B4%E6%96%B0%E4%BB%A3%E4%BB%B7%E5%9C%B0%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">costmap_2d更新代价地图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E7%9A%84updatebounds%E5%92%8Cupdatevalues%E8%AE%A1%E7%AE%97"><span class="nav-number">3.</span> <span class="nav-text">具体的updateBounds()和updateValues()计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%9D%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">一点思考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
