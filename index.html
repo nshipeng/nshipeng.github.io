@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-05-03 11:58:22 / 修改时间：17:46:27" itemprop="dateCreated datePublished" datetime="2022-05-03T11:58:22+08:00">2022-05-03</time>
+              <time title="创建时间：2022-05-03 11:58:22 / 修改时间：18:29:28" itemprop="dateCreated datePublished" datetime="2022-05-03T11:58:22+08:00">2022-05-03</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -223,14 +223,24 @@
 planner)生成的路径，使其在满足避障要求的前提下找到一条最短的路径。但是该方法并没有考虑机器人的动力学约束。"timed
 elastic band"(TEB)是对传统的"elastic
 band"(弹性带)方法的改进，TEB方法同样是对全局路径进行局部修改，通过将轨迹优化问题转化成多目标优化问题，从而可以将机器人的动力学约束、避障等约束放入优化问题的框架内。由于TEB中的目标函数是局部的，只考虑临近的几个位型，所以优化问题所对应的矩阵是稀疏矩阵，因此可以使用图优化算法进行求解。</p>
+<h2 id="teb算法">TEB算法</h2>
 <p>TEB算法的流程图如下图所示，其输入为path
 planning模块规划所得的全局路径，输出为(v，w)。 <img src="/2022/05/03/teb/teb.png" class title="teb"></p>
-<p>## TEB算法</p>
-<p>### TEB</p>
-<p>弹性带由一系列机器人的位姿所描述，符号为Q。对于平面移动的机器人而言，其位姿为<span class="math inline">\(\mathbf{x}_{i}=\left(x_{i}, y_{i},
-\beta_{i}\right)^{T} \in R^{2} \times S^{1}\)</span>
-，其中xi,yi表示位置，βi为机器人在地图坐标系下的朝向。如下图所示： <span class="math display">\[Q=\left\{\mathbf{x}_{i}\right\}_{i=0 \ldots n}
-\quad n \in \mathbb{N}\]</span> <img src="/2022/05/03/teb/teb2.png" class title="teb"></p>
+<h3 id="teb">TEB</h3>
+<p>弹性带由一系列机器人的位姿所描述，符号为<span class="math inline">\(Q\)</span>。对于平面移动的机器人而言，其位姿为<span class="math inline">\(\mathbf{x}_{i}=\left(x_{i}, y_{i},
+\beta_{i}\right)^{T} \in R^{2} \times S^{1}\)</span> ，其中<span class="math inline">\(x_{i}\)</span>,<span class="math inline">\(y_{i}\)</span> 表示位置，<span class="math inline">\(\beta
+_{i}\)</span>为机器人在地图坐标系下的朝向。n个位姿序列如下： <span class="math display">\[Q=\left\{\mathbf{x}_{i}\right\}_{i=0 \ldots n}
+\quad n \in \mathbb{N}\]</span></p>
+<p>"timed elastic band"是在弹性带的基础上加上了时间信息，使用符号<span class="math inline">\(\bigtriangleup T_{i}\)</span>表示第i个位姿<span class="math inline">\(x_{i}\)</span>与第i+1个位姿<span class="math inline">\(x_{i+1}\)</span>之间的时间间隔，n段时间序列如下：
+<span class="math display">\[\tau=\left\{\Delta T_{i}\right\}_{i=0
+\ldots n-1}\]</span></p>
+<p>TEB由位姿序列及时间段序列共同表示，可以记为如下元组形式： <span class="math display">\[B:=(Q, \tau)\]</span></p>
+<p>示意图如下图所示： <img src="/2022/05/03/teb/teb2.png" class title="teb"></p>
+<p>TEB算法的关键，在于求解最优的TEB序列，使其满足多目标约束 <span class="math display">\[f(B)=\sum_{k} \gamma_{k} f_{k}(B)\]</span> <span class="math display">\[B^{*}=\underset{B}{\operatorname{argmin}}
+f(B)\]</span></p>
+<p>上式中<span class="math inline">\(f_{k}\)</span>为目标函数，<span class="math inline">\(\gamma_{k}\)</span>为权重系数</p>
+<h3 id="约束">约束</h3>
+<h3 id="图优化">图优化</h3>
 <p>[1] Trajectory modification considering dynamic constraints of
 autonomous robots.<br>
 [2] Efficient Trajectory Optimization using a Sparse Model.</p>
